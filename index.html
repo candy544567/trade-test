@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国际贸易实务综合测试系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+        }
+
+        .login-screen, .test-screen {
+            padding: 40px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-screen {
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .login-form h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .test-header h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .question-type {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.correct {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .option.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .test-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .progress {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .result-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .result-details {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .result-details h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-details p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .quick-review {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quick-review h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .review-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .review-item.correct {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+
+        .review-item.incorrect {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .review-question {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .review-answer {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .login-screen, .test-screen {
+                padding: 20px;
+            }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
+            
+            .question-container {
+                padding: 15px;
+            }
+            
+            .review-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录界面 -->
+        <div class="login-screen" id="loginScreen">
+            <div class="login-form">
+                <h1>国际贸易实务综合测试系统</h1>
+                <p style="color: #666; margin-bottom: 20px; font-size: 14px;">包含单项选择题和多项选择题</p>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label for="studentName">姓名</label>
+                        <input type="text" id="studentName" required placeholder="请输入您的姓名">
+                    </div>
+                    <div class="input-group">
+                        <label for="studentId">学号</label>
+                        <input type="text" id="studentId" required placeholder="请输入您的学号">
+                    </div>
+                    <button type="submit" class="btn">开始测试</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 测试界面 -->
+        <div class="test-screen hidden" id="testScreen">
+            <div class="test-header">
+                <h1>国际贸易实务综合测试</h1>
+                <div class="user-info" id="userInfo"></div>
+            </div>
+            
+            <div id="questionsContainer"></div>
+            
+            <div class="test-controls">
+                <div class="progress" id="progress"></div>
+                <button class="btn" onclick="submitTest()" style="width: auto; padding: 12px 25px;">提交答案</button>
+            </div>
+        </div>
+
+        <!-- 结果界面 -->
+        <div class="test-screen hidden" id="resultScreen">
+            <div class="result-screen">
+                <div class="score-circle" id="scoreCircle">0分</div>
+                <div class="result-details">
+                    <h3>测试结果</h3>
+                    <p id="correctCount"></p>
+                    <p id="totalCount"></p>
+                    <p id="accuracyRate"></p>
+                    <p id="timeSpent"></p>
+                </div>
+                
+                <!-- 速记表 -->
+                <div class="quick-review">
+                    <h3>🔥 多选题核心考点速记表</h3>
+                    <div class="review-grid" id="quickReviewGrid"></div>
+                </div>
+                
+                <button class="btn" onclick="restartTest()" style="width: auto; padding: 12px 25px;">重新测试</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 题目数据 - 包含单选题和多选题
+        const questions = [
+            // 单选题 (28题)
+            {
+                type: 'single',
+                question: "根据《公约》规定，合同成立的时间是（）",
+                options: ["A.当发盘送达受盘人时", "B.交易双方签订书面合同的时间", "C.接受发出的时间", "D.接受生效的时间"],
+                correct: ["D"],
+                explanation: "根据《联合国国际货物销售合同公约》，合同在接受生效时成立。"
+            },
+            {
+                type: 'single',
+                question: "按《2020通则》解释，下列术语中既适用多种运输方式又可以出具已装船提单的是（）",
+                options: ["A.FCA", "B.FOB", "C.DPU", "D.CIF"],
+                correct: ["A"],
+                explanation: "FCA（Free Carrier）适用于多种运输方式，并且可以出具已装船提单。"
+            },
+            {
+                type: 'single',
+                question: "在交易磋商中，（）",
+                options: ["A.发盘只能由卖方作出，接受只能由买方作出", "B.发盘只能由买方作出，接受只能由卖方作出", "C.发盘和接受既可以由卖方作出，也可以由买方作出", "D.发盘必须在询盘后作出"],
+                correct: ["C"],
+                explanation: "在交易磋商中，发盘和接受都可以由买卖双方作出。"
+            },
+            {
+                type: 'single',
+                question: "下列不属于信用证（L/C）核心特点的是（）",
+                options: ["A.银行信用", "B.独立于合同", "C.单据交易", "D.买方直接付款"],
+                correct: ["D"],
+                explanation: "信用证是银行信用，不是买方直接付款。"
+            },
+            {
+                type: 'single',
+                question: "按提单收货人抬头不同分类的提单为（）",
+                options: ["A.已装船提单", "B.指示提单", "C.清洁提单", "D.班轮提单"],
+                correct: ["B"],
+                explanation: "指示提单是按收货人抬头分类的提单类型。"
+            },
+            {
+                type: 'single',
+                question: "载货船舶在海运途中遇到危难，船长为了维护船舶和所有货物的共同安全或使航程得以继续完成，而采取的有意并且合理的行为，所产生的某些特殊牺牲或支出的特殊费用。该表述对应的是（）",
+                options: ["A. 实际全损", "B. 推定全损", "C. 共同海损", "D. 单独海损"],
+                correct: ["C"],
+                explanation: "这是共同海损的定义。"
+            },
+            {
+                type: 'single',
+                question: "随附单据的汇票称为（）",
+                options: ["A.即期汇票", "B.远期汇票", "C.光票", "D.跟单汇票"],
+                correct: ["D"],
+                explanation: "随附单据的汇票称为跟单汇票。"
+            },
+            {
+                type: 'single',
+                question: "解决涉外争议方式中排除法院管辖的是（）",
+                options: ["A.协商", "B.调解", "C.仲裁", "D.诉讼"],
+                correct: ["C"],
+                explanation: "仲裁是排除法院管辖的争议解决方式。"
+            },
+            {
+                type: 'single',
+                question: "根据付款时间的不同信用证可分为（）",
+                options: ["A.即期信用证", "B.光票信用证", "C.备用信用证", "D.循环信用证"],
+                correct: ["A"],
+                explanation: "根据付款时间，信用证可分为即期信用证和远期信用证。"
+            },
+            {
+                type: 'single',
+                question: "出口换汇成本高于当时的外汇牌价时，说明该次出口（）",
+                options: ["A.亏损", "B.赢利", "C.不亏不赢", "D.不能确定"],
+                correct: ["A"],
+                explanation: "换汇成本高于外汇牌价意味着亏损。"
+            },
+            {
+                type: 'single',
+                question: "“你方5日电我方接受，付款方式为D/P at 30 days，而非L/C。”该电文属于交易磋商的（）环节。",
+                options: ["A.询盘", "B.发盘", "C.还盘", "D.接受"],
+                correct: ["C"],
+                explanation: "这是对原发盘条件的修改，属于还盘。"
+            },
+            {
+                type: 'single',
+                question: "属于银行信用的支付方式是（）",
+                options: ["A.D/A", "B.T/T", "C.D/P", "D.L/C"],
+                correct: ["D"],
+                explanation: "信用证（L/C）是银行信用。"
+            },
+            {
+                type: 'single',
+                question: "汇票中必须载明的事项（）",
+                options: ["A.出票日期", "B.出票地点", "C.出票人营业场所", "D.受票人营业场所"],
+                correct: ["A"],
+                explanation: "出票日期是汇票必须载明的事项。"
+            },
+            {
+                type: 'single',
+                question: "根据《UCP600》中规定，合同中如果使用“大约”“近似”等约量字眼时，可以解释为交货数量的增减幅度为（）。",
+                options: ["A.不超过5%", "B.不超过10%", "C.不超过15%", "D.由卖方自行决定"],
+                correct: ["B"],
+                explanation: "《UCP600》规定约量解释为不超过10%的增减幅度。"
+            },
+            {
+                type: 'single',
+                question: "D/P、D/A、L/C三种支付方式就卖方收汇风险从小至大排序为（）",
+                options: ["A.D/P、D/A、L/C", "B.D/P、L/C、D/A", "C.L/C、D/A、D/P", "D.L/C、D/P、D/A"],
+                correct: ["D"],
+                explanation: "风险排序：L/C < D/P < D/A。"
+            },
+            {
+                type: 'single',
+                question: "根据《2020通则》解释，卖方负责办理进口清关手续的贸易术语有（）",
+                options: ["A.DAP", "B.DDP", "C.CIP", "D.DPU"],
+                correct: ["B"],
+                explanation: "DDP（Delivered Duty Paid）卖方负责进口清关。"
+            },
+            {
+                type: 'single',
+                question: "外贸业务中对造型有特殊要求或具有色香味方面特征的商品适用（）",
+                options: ["A.凭样品买卖", "B.凭规格买卖", "C.凭等级买卖", "D.凭产地名称买卖"],
+                correct: ["A"],
+                explanation: "凭样品买卖适用于有特殊要求的商品。"
+            },
+            {
+                type: 'single',
+                question: "按照《联合国国际货物销售合同公约》规定，如果卖方交货数量大于合同约定数量，买方（）",
+                options: ["A.只能接受全部数量", "B.可以拒收全部数量", "C.只能拒收多交的全部数量，而不能拒收多交的部分数量", "D.可以拒收多交的部分或全部数量，也可以收取多交的部分或全部数量"],
+                correct: ["D"],
+                explanation: "买方可以选择接受或拒收多交的部分或全部数量。"
+            },
+            {
+                type: 'single',
+                question: "国际货物运输业务中船公司一般是按货物的（）重量计收海运运费。",
+                options: ["A.净重", "B.毛重", "C.理论重量", "D.法定重量"],
+                correct: ["B"],
+                explanation: "船公司通常按毛重计收海运运费。"
+            },
+            {
+                type: 'single',
+                question: "多数国家都认定仲裁裁决是（）",
+                options: ["A.终局的", "B.可更改的", "C.不确定的", "D.无约束力的"],
+                correct: ["A"],
+                explanation: "仲裁裁决通常是终局的。"
+            },
+            {
+                type: 'single',
+                question: "下列关于定牌中性包装的说法，正确的是（）",
+                options: ["A.属于中性包装的一种，需标注买方指定的商标/牌号，但不表明生产国别", "B.不属于中性包装，需同时表明生产国别和商标", "C.属于中性包装的一种，既不标注商标，也不表明生产国别", "D.签定运输合同的日期"],
+                correct: ["A"],
+                explanation: "定牌中性包装需标注买方指定商标但不表明生产国别。"
+            },
+            {
+                type: 'single',
+                question: "按CIF对外成交一批罐头食品，卖方按下列（）方式投保是正确的。",
+                options: ["A.平安险加水渍险", "B.一切险加偷窃提货不着险", "C.水渍险加偷窃提货不着险", "D.平安险加一切险"],
+                correct: ["C"],
+                explanation: "罐头食品应投保水渍险加偷窃提货不着险。"
+            },
+            {
+                type: 'single',
+                question: "我国外贸企业买卖合同有效成立的形式为（）",
+                options: ["A.成交确认书", "B.口头成交协议", "C.成交商品目录", "D.成交样品"],
+                correct: ["A"],
+                explanation: "成交确认书是合同有效成立的形式。"
+            },
+            {
+                type: 'single',
+                question: "除了共同海损，由海上风险直接导致的船舶或货物的部分损失是（）",
+                options: ["A.实际全损", "B.推定全损", "C.共同海损", "D.单独海损"],
+                correct: ["D"],
+                explanation: "单独海损是由海上风险直接导致的部分损失。"
+            },
+            {
+                type: 'single',
+                question: "下列不属于海运提单性质的是（）",
+                options: ["A.货物收据", "B.运输合同的证明", "C.物权凭证", "D.海关报关凭证"],
+                correct: ["D"],
+                explanation: "海运提单不是海关报关凭证。"
+            },
+            {
+                type: 'single',
+                question: "信用证（L/C）的本质是（）",
+                options: ["A.出口方向进口方开立的付款承诺文件", "B.银行向出口方开立的有条件承诺付款的书面文件", "C.进口方向银行开立的委托付款文件", "D.买卖双方之间签订的直接付款协议"],
+                correct: ["B"],
+                explanation: "信用证是银行向出口方开立的有条件承诺付款文件。"
+            },
+            {
+                type: 'single',
+                question: "本币换算为对外报价按外汇牌价（）",
+                options: ["A.现汇买入价", "B.现汇卖出价", "C.现汇中间价", "D.现钞买入价"],
+                correct: ["B"],
+                explanation: "本币换算为对外报价按现汇卖出价。"
+            },
+            {
+                type: 'single',
+                question: "汇付方式是（）",
+                options: ["A.D/A", "B.T/T", "C.D/P", "D.L/C"],
+                correct: ["B"],
+                explanation: "T/T（电汇）是汇付方式。"
+            },
+            
+            // 多选题 (10题)
+            {
+                type: 'multiple',
+                question: "在国际货物买卖合同中，商品单价条款应包括（）",
+                options: ["A.贸易术语", "B.计价货币", "C.单位价格金额", "D.计量单位"],
+                correct: ["A", "B", "C", "D"],
+                explanation: "商品单价条款必须包含贸易术语、计价货币、单位价格金额和计量单位四个要素。"
+            },
+            {
+                type: 'multiple',
+                question: "构成有效发盘的条件为（）",
+                options: ["A.向一个或一个以上的特定人提出", "B.发盘的内容必须十分确定", "C.表明订立合同的意愿", "D.发盘送达受盘人"],
+                correct: ["A", "B", "C", "D"],
+                explanation: "有效发盘需要向特定人提出、内容确定、表明订约意愿并送达受盘人。"
+            },
+            {
+                type: 'multiple',
+                question: "海运单具有()性质",
+                options: ["A.货物所有权", "B.货物收据", "C.运输合同证明", "D.可以转让"],
+                correct: ["B", "C"],
+                explanation: "海运单具有货物收据和运输合同证明的性质，但不具有货物所有权凭证和可转让性。"
+            },
+            {
+                type: 'multiple',
+                question: "根据我国《海洋货物运输保险条款》的规定，可单独投保的险别是（）",
+                options: ["A.平安险", "B.水渍险", "C.一切险", "D.罢工险"],
+                correct: ["A", "B", "C"],
+                explanation: "平安险、水渍险和一切险可以单独投保，罢工险属于特殊附加险。"
+            },
+            {
+                type: 'multiple',
+                question: "下列关于汇票的表述，符合的有（）",
+                options: ["A. 是无条件的书面支付命令", "B. 要求在特定时间支付一定金额", "C. 由出票人向受票人签发", "D. 是需经付款人承兑方可生效的支付承诺"],
+                correct: ["A", "B", "C"],
+                explanation: "汇票是无条件书面支付命令，要求特定时间支付金额，由出票人签发。"
+            },
+            {
+                type: 'multiple',
+                question: "构成一项有效的接受（承诺），必须符合的条件有（）",
+                options: ["A. 接受由受盘人做出", "B. 接受内容与发盘条件一致", "C. 接受在有效期（或合理时间）内做出", "D. 接受以口头 / 书面形式表示"],
+                correct: ["A", "B", "C", "D"],
+                explanation: "有效接受必须由受盘人作出，内容与发盘一致，在有效期内，并以适当形式表示。"
+            },
+            {
+                type: 'multiple',
+                question: "国际贸易中达成一项交易必不可少的环节是（）",
+                options: ["A.询盘", "B.发盘", "C.还盘", "D.接受"],
+                correct: ["B", "D"],
+                explanation: "发盘和接受是达成交易必不可少的两个环节。"
+            },
+            {
+                type: 'multiple',
+                question: "属于可出具海运提单的贸易术语是（）",
+                options: ["A.FAC", "B.FOB", "C.CFR", "D.CIF"],
+                correct: ["B", "C", "D"],
+                explanation: "FOB、CFR和CIF都是海运贸易术语，可以出具海运提单。"
+            },
+            {
+                type: 'multiple',
+                question: "关于 CIF 术语，下列表述正确的有（）",
+                options: ["A.术语全称是成本、保险费加运费", "B.卖方需在指定装运港将货物装上船，即完成交货", "C.卖方应支付货物运至指定目的港所需的运费并办理运输保险", "D.卖方需将货物运至指定目的港并交付买方后，才算完成交货"],
+                correct: ["A", "B", "C"],
+                explanation: "CIF术语下，卖方在装运港完成交货，不负责将货物运至目的港交付买方。"
+            },
+            {
+                type: 'multiple',
+                question: "伦敦保险协会海运保险条款所规定险别中可以单独投保的是（）",
+                options: ["A.ICC（A）、ICC（B）、ICC（C）", "B.协会战争条款", "C.协会罢工条款", "D.恶意损害条款"],
+                correct: ["A", "B", "C"],
+                explanation: "ICC(A)(B)(C)、协会战争条款和协会罢工条款都可以单独投保。"
+            }
+        ];
+
+        // 多选题速记表数据
+        const multiChoiceQuickReview = [
+            {
+                question: "商品单价条款四要素",
+                answer: "ABCD",
+                keyPoints: ["贸易术语", "计价货币", "单位价格金额", "计量单位"],
+                memory: "单价=术语+货币+金额+单位"
+            },
+            {
+                question: "有效发盘四条件",
+                answer: "ABCD",
+                keyPoints: ["特定人提出", "内容确定", "订约意愿", "送达受盘人"],
+                memory: "发盘=特定+确定+意愿+送达"
+            },
+            {
+                question: "海运单性质",
+                answer: "BC",
+                keyPoints: ["货物收据", "运输合同证明"],
+                memory: "海运单=收据+合同证明(无所有权)"
+            },
+            {
+                question: "可单独投保险别",
+                answer: "ABC",
+                keyPoints: ["平安险", "水渍险", "一切险"],
+                memory: "基本险别：平安+水渍+一切"
+            },
+            {
+                question: "汇票三特征",
+                answer: "ABC",
+                keyPoints: ["无条件支付命令", "确定时间金额", "出票人签发"],
+                memory: "汇票=无条件+确定+签发"
+            },
+            {
+                question: "有效接受四要素",
+                answer: "ABCD",
+                keyPoints: ["受盘人作出", "内容一致", "有效期内", "适当形式"],
+                memory: "接受=受盘人+一致+及时+形式"
+            },
+            {
+                question: "交易必备环节",
+                answer: "BD",
+                keyPoints: ["发盘", "接受"],
+                memory: "交易=发盘+接受(询盘还盘非必需)"
+            },
+            {
+                question: "可出提单术语",
+                answer: "BCD",
+                keyPoints: ["FOB", "CFR", "CIF"],
+                memory: "海运术语：FOB+CFR+CIF"
+            },
+            {
+                question: "CIF术语正确表述",
+                answer: "ABC",
+                keyPoints: ["成本+保险+运费", "装运港交货", "卖方付运费保险"],
+                memory: "CIF=装运港完成+卖方付费用"
+            },
+            {
+                question: "伦敦协会可投保条款",
+                answer: "ABC",
+                keyPoints: ["ICC(A)(B)(C)", "战争条款", "罢工条款"],
+                memory: "伦敦协会：ICC+战争+罢工"
+            }
+        ];
+
+        let shuffledQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let startTime;
+        let studentInfo = {};
+
+        // Fisher-Yates 洗牌算法
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // 登录处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const id = document.getElementById('studentId').value.trim();
+            
+            if (name && id) {
+                studentInfo = { name, id };
+                startTest();
+            } else {
+                alert('请填写完整的姓名和学号！');
+            }
+        });
+
+        // 开始测试
+        function startTest() {
+            // 打乱题目顺序
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(null).map(() => []);
+            startTime = new Date();
+            
+            // 显示用户信息
+            document.getElementById('userInfo').textContent = `考生：${studentInfo.name} | 学号：${studentInfo.id}`;
+            
+            // 切换界面
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('testScreen').classList.remove('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            
+            // 显示题目
+            displayQuestions();
+        }
+
+        // 显示所有题目
+        function displayQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            shuffledQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                
+                const typeLabel = question.type === 'multiple' ? 
+                    '<span class="question-type">多选题</span>' : 
+                    '<span class="question-type">单选题</span>';
+                
+                let optionsHtml = '';
+                question.options.forEach((option, optionIndex) => {
+                    const optionLetter = option.charAt(0);
+                    const inputType = question.type === 'multiple' ? 'checkbox' : 'radio';
+                    const inputName = `question${index}`;
+                    
+                    optionsHtml += `
+                        <label class="option" onclick="selectOption(${index}, '${optionLetter}', '${question.type}')">
+                            <input type="${inputType}" name="${inputName}" value="${optionLetter}">
+                            ${option}
+                        </label>
+                    `;
+                });
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">第 ${index + 1} 题${typeLabel}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options">${optionsHtml}</div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+            
+            updateProgress();
+        }
+
+        // 选择选项
+        function selectOption(questionIndex, optionLetter, questionType) {
+            if (questionType === 'single') {
+                // 单选题 - 单选
+                userAnswers[questionIndex] = [optionLetter];
+                
+                // 更新UI显示
+                const options = document.querySelectorAll(`[name="question${questionIndex}"]`);
+                options.forEach(opt => {
+                    const label = opt.parentElement;
+                    label.classList.remove('selected');
+                    if (opt.value === optionLetter) {
+                        label.classList.add('selected');
+                    }
+                });
+            } else {
+                // 多选题 - 多选
+                const checkbox = document.querySelector(`input[name="question${questionIndex}"][value="${optionLetter}"]`);
+                const label = checkbox.parentElement;
+                
+                if (checkbox.checked) {
+                    // 如果选中，添加到答案数组
+                    if (!userAnswers[questionIndex].includes(optionLetter)) {
+                        userAnswers[questionIndex].push(optionLetter);
+                    }
+                    label.classList.add('selected');
+                } else {
+                    // 如果取消选中，从答案数组移除
+                    userAnswers[questionIndex] = userAnswers[questionIndex].filter(answer => answer !== optionLetter);
+                    label.classList.remove('selected');
+                }
+            }
+            
+            updateProgress();
+        }
+
+        // 更新进度
+        function updateProgress() {
+            const answered = userAnswers.filter(answer => answer.length > 0).length;
+            const total = questions.length;
+            document.getElementById('progress').textContent = `答题进度：${answered}/${total}`;
+        }
+
+        // 提交测试
+        function submitTest() {
+            const unanswered = userAnswers.filter(answer => answer.length === 0).length;
+            
+            if (unanswered > 0) {
+                if (!confirm(`还有 ${unanswered} 道题未作答，确定要提交吗？`)) {
+                    return;
+                }
+            }
+            
+            showResults();
+        }
+
+        // 显示结果
+        function showResults() {
+            const endTime = new Date();
+            const timeSpent = Math.round((endTime - startTime) / 1000 / 60); // 分钟
+            
+            let correctCount = 0;
+            const results = [];
+            
+            shuffledQuestions.forEach((question, index) => {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.correct;
+                
+                // 判断答案是否正确
+                const isCorrect = userAnswer.length === correctAnswer.length && 
+                                userAnswer.every(answer => correctAnswer.includes(answer));
+                
+                if (isCorrect) correctCount++;
+                
+                results.push({
+                    questionIndex: index,
+                    userAnswer,
+                    correctAnswer,
+                    isCorrect,
+                    question: question.question,
+                    type: question.type
+                });
+            });
+            
+            const score = Math.round((correctCount / questions.length) * 100);
+            const accuracy = ((correctCount / questions.length) * 100).toFixed(1);
+            
+            // 显示结果界面
+            document.getElementById('testScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+            
+            // 更新结果信息
+            document.getElementById('scoreCircle').textContent = `${score}分`;
+            document.getElementById('correctCount').textContent = `答对题数：${correctCount} 题`;
+            document.getElementById('totalCount').textContent = `总题数：${questions.length} 题 (单选28题，多选10题)`;
+            document.getElementById('accuracyRate').textContent = `正确率：${accuracy}%`;
+            document.getElementById('timeSpent').textContent = `用时：${timeSpent} 分钟`;
+            
+            // 显示速记表
+            displayQuickReview();
+            
+            // 显示详细答题情况
+            displayDetailedResults(results);
+        }
+
+        // 显示多选题速记表
+        function displayQuickReview() {
+            const grid = document.getElementById('quickReviewGrid');
+            grid.innerHTML = '';
+            
+            multiChoiceQuickReview.forEach(item => {
+                const reviewDiv = document.createElement('div');
+                reviewDiv.className = 'review-item';
+                reviewDiv.innerHTML = `
+                    <div class="review-question">${item.question}</div>
+                    <div class="review-answer">
+                        <strong>答案：${item.answer}</strong><br>
+                        <strong>考点：</strong>${item.keyPoints.join('、')}<br>
+                        <strong>记忆：</strong>${item.memory}
+                    </div>
+                `;
+                grid.appendChild(reviewDiv);
+            });
+        }
+
+        // 显示详细答题情况
+        function displayDetailedResults(results) {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            results.forEach((result, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                
+                const typeLabel = result.type === 'multiple' ? 
+                    '<span class="question-type">多选题</span>' : 
+                    '<span class="question-type">单选题</span>';
+                
+                let optionsHtml = '';
+                result.correctAnswer.forEach(correct => {
+                    optionsHtml += `<div class="option correct">✓ ${result.question.options.find(opt => opt.startsWith(correct))}</div>`;
+                });
+                
+                result.userAnswer.forEach(user => {
+                    if (!result.correctAnswer.includes(user)) {
+                        optionsHtml += `<div class="option incorrect">✗ ${result.question.options.find(opt => opt.startsWith(user))}</div>`;
+                    }
+                });
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">第 ${index + 1} 题${typeLabel} ${result.isCorrect ? '✓' : '✗'}</div>
+                    <div class="question-text">${result.question}</div>
+                    <div class="options">${optionsHtml}</div>
+                    ${!result.isCorrect ? `<div style="margin-top: 10px; color: #666; font-size: 14px;">您的答案：${result.userAnswer.join(',') || '未作答'} | 正确答案：${result.correctAnswer.join(',')}</div>` : ''}
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        // 重新测试
+        function restartTest() {
+            if (confirm('确定要重新开始测试吗？')) {
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('testScreen').classList.add('hidden');
+                document.getElementById('resultScreen').classList.add('hidden');
+                
+                // 清空表单
+                document.getElementById('loginForm').reset();
+            }
+        }
+
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('国际贸易实务综合测试系统已加载完成');
+        });
+    </script>
+</body>
+</html>
+Add trade test system"
